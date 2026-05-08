@@ -1,9 +1,12 @@
-FROM php:8.2-apache
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
-    /etc/apache2/mods-enabled/mpm_event.load \
-    /etc/apache2/mods-enabled/mpm_worker.conf \
-    /etc/apache2/mods-enabled/mpm_worker.load && \
-    a2enmod mpm_prefork rewrite
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    php8.1 \
+    php8.1-mysql \
+    libapache2-mod-php8.1 && \
+    rm -rf /var/lib/apt/lists/*
 COPY . /var/www/html/
+RUN chown -R www-data:www-data /var/www/html
 EXPOSE 80
-CMD ["apache2-foreground"]
+CMD ["apache2ctl", "-D", "FOREGROUND"]
